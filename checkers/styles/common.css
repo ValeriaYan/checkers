@@ -1,0 +1,31 @@
+:root {
+    --background-color: #4256B9;
+    --second-color: #B58EF8;
+    --text-color:  #eee;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    font-size: 24px;
+    font-family: 'Poppins';
+}
+
+.wrapper {
+    position: relative;
+}
+
+.container {
+    margin: 0 auto;
+}
+
+li {
+    list-style: none;
+    cursor: pointer;
+}
