@@ -1,5 +1,5 @@
-@import url(./styles/common.css);
-@import url(./styles/header.css);
+@import url(../../styles/common.css);
+@import url(../../styles/header.css);
 
 .wrapper::after,
 .wrapper::before {
@@ -13,7 +13,7 @@
 
 .wrapper::after {
     z-index: -2;
-    background-image: url(../assets/26399-b58ef8.png);
+    background-image: url(../../assets/26399-b58ef8.png);
 }
 
 .wrapper::before {

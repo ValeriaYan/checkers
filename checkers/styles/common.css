@@ -1,7 +1,10 @@
 :root {
     --background-color: #4256B9;
-    --second-color: #B58EF8;
+    --second-color: #AD8DF2;
     --text-color:  #eee;
+    --cell-color-red: #fc7c78;
+    --cell-color-green: #bfe290;
+    --cell-color-yellow: #ffe196;
 }
 
 * {
@@ -28,4 +31,9 @@ body {
 li {
     list-style: none;
     cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+    color: var(--text-color)
 }
