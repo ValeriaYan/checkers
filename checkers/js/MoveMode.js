@@ -57,9 +57,18 @@ export class MoveMode {
             this.counterAvailableMoves = 0;
             this.counterRequireMoves = 0;
             this.removeActiveChecker();
-            this.checkers.switchPlayer();
+            this.switchPlayer();
         } else {
             this.setActiveChecker(this.activeChecker);
+        }
+    }
+
+    switchPlayer() {
+        const player = this.checkers.switchPlayer();
+        this.view.switchPlayer(player);
+        const loss = this.checkers.checkLoss();
+        if(loss) {
+            this.view.displayWinnerBlock();
         }
     }
 

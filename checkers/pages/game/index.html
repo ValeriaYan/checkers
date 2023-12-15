@@ -28,6 +28,7 @@
       </header>
       <main class="main">
         <div class="main__container container">
+            <div class="main__moves"></div>
             <div class="main__board board">
                 <table class="board__table">
                     <thead>
@@ -152,9 +153,20 @@
                     </tfoot>
                 </table>
             </div>
+            <div class="main__controls">
+              <div class="main__current-player">
+                <p>Current player:</p>
+                <p class="main__player" data-player="white">white</p>
+              </div>
+            </div>
         </div>
       </main>
       <footer class="footer"></footer>
+      <div class="winner active">
+        <div class="winner__player">white</div>
+        <p>won</p>
+      </div>
+      <div class="overlay"></div>
     </div>
     <script src="../../js/main.js" type="module"></script>
   </body>

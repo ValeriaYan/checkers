@@ -3,6 +3,9 @@ export class View {
     constructor(board) {
         this.htmlBoard = document.querySelector('.board');
         this.htmlCells = document.querySelectorAll('.board__cell');
+        this.htmlCurrentPlayer = document.querySelector('.main__player');
+        this.winnerBlock = document.querySelector('.winner');
+        this.overlay = document.querySelector('.overlay');
         this.board = board;
     }
 
@@ -153,5 +156,22 @@ export class View {
 
     getHtmlCells() {
         return this.htmlCells;
+    }
+
+    getWinnerBlock() {
+        return this.winnerBlock;
+    }
+
+    getOverlay() {
+        return this.overlay;
+    }
+
+    switchPlayer(player) {
+        this.htmlCurrentPlayer.dataset.player = player;
+        this.htmlCurrentPlayer.textContent = player;
+    }
+
+    displayWinnerBlock() {
+        this.winnerBlock.classList.add('active');
     }
 }

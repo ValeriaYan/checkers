@@ -38,9 +38,25 @@ export class Checkers {
         } else {
             this.currentPlayer = this.board.getPlayer1();
         }
+
+        return this.currentPlayer;
     }
 
-    checkWin() {}
+    checkLoss() {
+        const checkers = this.getAllPlayerCheckers(this.currentPlayer);
+        console.log(checkers)
+        if(checkers.length == 0) {
+            return true;
+        }
+
+        for(let i = 0; i < checkers.length; i++) {
+            if(this.getAvailableMoves(checkers[i]).length !== 0 || this.getRequireMoves(checkers[i]).length !== 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     turnIntoQueen() {}
 
@@ -96,5 +112,19 @@ export class Checkers {
         }
 
         return requireMoves;
+    }
+
+    getAllPlayerCheckers(player) {
+        const checkers = [];
+        const board = this.board.getBoard();
+        for(let i = 0; i < board.length; i++) {
+            for(let j = 0; j < board[i].length; j++) {
+                if(board[i][j] == player) {
+                    checkers.push([i, j]);
+                }
+            }
+        }
+
+        return checkers;
     }
 }
