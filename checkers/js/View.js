@@ -40,9 +40,53 @@ export class View {
         newCell.append(checker);
     }
 
-    moveChecker(checker, newCell) {
+    async moveChecker(checker, newCell) {
         const parent = checker.parentNode;
-        this.changeParentForChecker(parent, newCell, checker);
+        this.smoothMove(checker, parent, newCell);
+        await new Promise((res, rej) => {
+            setTimeout(() => res((() => {
+                this.changeParentForChecker(parent, newCell, checker);
+                checker.style.animation = 'none';
+            })()), 900)
+        })
+    }
+
+    smoothMove(checker, oldCell, newCell) {
+        const oldLeft = oldCell.getBoundingClientRect().left;
+        const newLeft = newCell.getBoundingClientRect().left;
+        const oldTop = oldCell.getBoundingClientRect().top;
+        const newTop = newCell.getBoundingClientRect().top;
+        if(oldLeft < newLeft && oldTop > newTop) {
+            if(newCell.classList.contains('require')) {
+                checker.style.animation = 'go-two-top-right-cell 1s'; 
+            } else {
+                checker.style.animation = 'go-top-right-cell 1s'; 
+            }
+        }
+
+        if(oldLeft > newLeft && oldTop > newTop) {
+            if(newCell.classList.contains('require')) {
+                checker.style.animation = 'go-two-top-left-cell 1s'; 
+            } else {
+                checker.style.animation = 'go-top-left-cell 1s'; 
+            }
+        }
+
+        if(oldLeft < newLeft && oldTop < newTop) {
+            if(newCell.classList.contains('require')) {
+                checker.style.animation = 'go-two-bottom-right-cell 1s'; 
+            } else {
+                checker.style.animation = 'go-bottom-right-cell 1s'; 
+            }
+        }
+
+        if(oldLeft > newLeft && oldTop < newTop) {
+            if(newCell.classList.contains('require')) {
+                checker.style.animation = 'go-two-bottom-left-cell 1s'; 
+            } else {
+                checker.style.animation = 'go-bottom-left-cell 1s'; 
+            }
+        }
     }
 
     displayAvailableCells(requireMoves, availableMoves) {

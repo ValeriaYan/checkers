@@ -36,7 +36,7 @@ export class MoveMode {
         return this.checkers.getRequireMoves(checkerPosition)
     }
 
-    moveChecker(cell) {
+    async moveChecker(cell) {
         const parent = this.activeChecker.parentNode;
         const oldPosition = [+parent.dataset.row, +parent.dataset.col];
         const newPosition = [+cell.dataset.row, +cell.dataset.col];
@@ -47,12 +47,13 @@ export class MoveMode {
             const rowRemovedChecker = (oldPosition[0] + newPosition[0]) / 2;
             const colRemovedChecker = (oldPosition[1] + newPosition[1]) / 2;
             this.deleteChecker(rowRemovedChecker, colRemovedChecker);
-            this.counterRequireMoves++
+            this.counterRequireMoves++;
         }
         
         this.checkers.moveChecker(oldPosition, newPosition);
-        this.view.moveChecker(this.activeChecker, cell);
+        await this.view.moveChecker(this.activeChecker, cell);
         if(this.getRequireMoves(this.activeChecker).length == 0 || this.counterAvailableMoves == 1) {
+            console.log(this.getRequireMoves(this.activeChecker).length)
             this.counterAvailableMoves = 0;
             this.counterRequireMoves = 0;
             this.removeActiveChecker();
@@ -77,7 +78,3 @@ export class MoveMode {
     }
 
 }
-
-// назначаем активную шашку (через View запрещаем кликать на любые другие шашки)
-// показываем доступные ходы (достаем доступные ячейки для хода из Checkers)(выделяем ячейки через View)
-// метод для перемещение шашки (через View делаем перемещение, через Checkers перемещаем в массиве) проверяем, есть ли еще доступные ходы и тд.
