@@ -43,17 +43,23 @@ export class MoveMode {
         if(cell.classList.contains('available')) {
             this.counterAvailableMoves++;
         }
+        
+        const queen = this.checkers.moveChecker(oldPosition, newPosition);
+        const way = this.checkers.getWay(oldPosition, newPosition);
+        for(let i = 0; i < way.length; i++) {
+            const cell = this.view.getCellByIndex(way[i][0] * 8 + way[i][1])
+            if(cell.children[0]) {
+                this.deleteChecker(way[i][0], way[i][1]);
+            }
+            await this.view.moveChecker(this.activeChecker, cell);
+        }
         if(cell.classList.contains('require')) {
-            const rowRemovedChecker = (oldPosition[0] + newPosition[0]) / 2;
-            const colRemovedChecker = (oldPosition[1] + newPosition[1]) / 2;
-            this.deleteChecker(rowRemovedChecker, colRemovedChecker);
             this.counterRequireMoves++;
         }
-        
-        this.checkers.moveChecker(oldPosition, newPosition);
-        await this.view.moveChecker(this.activeChecker, cell);
+        if(queen) {
+            this.view.turnIntoQueen(this.activeChecker);
+        }
         if(this.getRequireMoves(this.activeChecker).length == 0 || this.counterAvailableMoves == 1) {
-            console.log(this.getRequireMoves(this.activeChecker).length)
             this.counterAvailableMoves = 0;
             this.counterRequireMoves = 0;
             this.removeActiveChecker();
@@ -68,7 +74,8 @@ export class MoveMode {
         this.view.switchPlayer(player);
         const loss = this.checkers.checkLoss();
         if(loss) {
-            this.view.displayWinnerBlock();
+            const winner = this.checkers.switchPlayer();
+            this.view.displayWinnerBlock(winner);
         }
     }
 

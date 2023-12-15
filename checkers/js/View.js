@@ -12,10 +12,10 @@ export class View {
     fillHtmlBoard() {
         for(let i = 0; i < this.board.getBoard().length; i++) {
             for(let j = 0; j < this.board.getBoard()[i].length; j++) {
-                if(this.board.getBoard()[i][j] == this.board.getPlayer1()) {
+                if(this.board.getBoard()[i][j]?.getPlayer() == this.board.getPlayer1()) {
                     this.htmlCells[i * 8 + j].append(this.createCheckerImg(this.board.getPlayer1()));
                 } 
-                if(this.board.getBoard()[i][j] == this.board.getPlayer2()) {
+                if(this.board.getBoard()[i][j]?.getPlayer() == this.board.getPlayer2()) {
                     this.htmlCells[i * 8 + j].append(this.createCheckerImg(this.board.getPlayer2()));
                 } 
             }
@@ -37,6 +37,11 @@ export class View {
         return img;
     }
 
+    turnIntoQueen(checker) {
+        checker.classList.contains('white') ? checker.src = '../../assets/checker__white-queen.png' : checker.src = '../../assets/checker__black-queen.png';
+        checker.classList.add('queen');
+    }
+
     changeParentForChecker(oldCell, newCell, checker) {
         oldCell.classList.remove('checked');
         oldCell.removeChild(checker);
@@ -50,7 +55,7 @@ export class View {
             setTimeout(() => res((() => {
                 this.changeParentForChecker(parent, newCell, checker);
                 checker.style.animation = 'none';
-            })()), 900)
+            })()), 150)
         })
     }
 
@@ -60,35 +65,19 @@ export class View {
         const oldTop = oldCell.getBoundingClientRect().top;
         const newTop = newCell.getBoundingClientRect().top;
         if(oldLeft < newLeft && oldTop > newTop) {
-            if(newCell.classList.contains('require')) {
-                checker.style.animation = 'go-two-top-right-cell 1s'; 
-            } else {
-                checker.style.animation = 'go-top-right-cell 1s'; 
-            }
+            checker.style.animation = 'go-top-right-cell 0.2s'; 
         }
 
         if(oldLeft > newLeft && oldTop > newTop) {
-            if(newCell.classList.contains('require')) {
-                checker.style.animation = 'go-two-top-left-cell 1s'; 
-            } else {
-                checker.style.animation = 'go-top-left-cell 1s'; 
-            }
+            checker.style.animation = 'go-top-left-cell 0.2s'; 
         }
 
         if(oldLeft < newLeft && oldTop < newTop) {
-            if(newCell.classList.contains('require')) {
-                checker.style.animation = 'go-two-bottom-right-cell 1s'; 
-            } else {
-                checker.style.animation = 'go-bottom-right-cell 1s'; 
-            }
+            checker.style.animation = 'go-bottom-right-cell 0.2s'; 
         }
 
         if(oldLeft > newLeft && oldTop < newTop) {
-            if(newCell.classList.contains('require')) {
-                checker.style.animation = 'go-two-bottom-left-cell 1s'; 
-            } else {
-                checker.style.animation = 'go-bottom-left-cell 1s'; 
-            }
+            checker.style.animation = 'go-bottom-left-cell 0.2s'; 
         }
     }
 
@@ -154,6 +143,10 @@ export class View {
         return this.htmlBoard
     }
 
+    getCellByIndex(index) {
+        return this.htmlCells[index];
+    }
+
     getHtmlCells() {
         return this.htmlCells;
     }
@@ -171,7 +164,8 @@ export class View {
         this.htmlCurrentPlayer.textContent = player;
     }
 
-    displayWinnerBlock() {
+    displayWinnerBlock(winner) {
         this.winnerBlock.classList.add('active');
+        this.winnerBlock.children[0].textContent = winner;
     }
 }

@@ -26,7 +26,7 @@ export class Handlers {
     }
 
     cellClickHandler(event) {
-        if(event.target.classList.contains(`board__cell`) && (event.target.classList.contains(`available`) || event.target.classList.contains(`require`))) {
+        if(event.target.classList.contains(`board__cell`) && ((event.target.classList.contains(`available`) || event.target.classList.contains(`require`)))) {
             this.moveMode.moveChecker(event.target);
         }
     }
