@@ -14,6 +14,11 @@ export class MoveMode {
         this.view.fillHtmlBoard();
     }
 
+    fillExampleBoard() {
+        this.checkers.fillExampleBoard();
+        this.view.fillHtmlBoard();
+    }
+
     setActiveChecker(checker) {
        if(checker.classList.contains(this.checkers.getCurrentPlayer())) {
         this.activeChecker = checker;

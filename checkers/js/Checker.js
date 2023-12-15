@@ -1,7 +1,11 @@
 export class Checker {
-    constructor(player) {
+    constructor(player, isQueen) {
         this.player = player;
-        this.isQueen = false;
+        if(isQueen) {
+            this.isQueen = isQueen;
+        } else {
+            this.isQueen = false;
+        }
     }
 
     setQueen() {

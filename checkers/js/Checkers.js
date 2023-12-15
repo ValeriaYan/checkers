@@ -24,6 +24,20 @@ export class Checkers {
         this.board.setBoard(newBoard);
     }
 
+    fillExampleBoard() {
+        const newBoard = [
+            [null, new Checker(this.board.getPlayer2()), null, null, null, null, null, null],
+            [null, null, new Checker(this.board.getPlayer2()), null, new Checker(this.board.getPlayer2()), null, null, null],
+            [null, null, null, null, null, null, null, new Checker(this.board.getPlayer2())],
+            [null, null, new Checker(this.board.getPlayer2()), null, null, null, null, null],
+            [null, null, null, null, null, new Checker(this.board.getPlayer1()), null, new Checker(this.board.getPlayer1())],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, new Checker(this.board.getPlayer2(), true), null, null, null, null, null],
+        ]
+        this.board.setBoard(newBoard);
+    }
+
     moveChecker(oldPosition, newPosition) {
         const checker = this.board.getBoard()[oldPosition[0]][oldPosition[1]];
         this.board.getBoard()[oldPosition[0]][oldPosition[1]] = null;

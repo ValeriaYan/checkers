@@ -7,6 +7,7 @@ export class View {
         this.winnerBlock = document.querySelector('.winner');
         this.overlay = document.querySelector('.overlay');
         this.newGameBtn = document.querySelector('.main__start-btn');
+        this.exampleBtn = document.querySelector('.main__example-btn');
         this.board = board;
     }
 
@@ -15,10 +16,18 @@ export class View {
         for(let i = 0; i < this.board.getBoard().length; i++) {
             for(let j = 0; j < this.board.getBoard()[i].length; j++) {
                 if(this.board.getBoard()[i][j]?.getPlayer() == this.board.getPlayer1()) {
-                    this.htmlCells[i * 8 + j].append(this.createCheckerImg(this.board.getPlayer1()));
+                    const checker = this.createCheckerImg(this.board.getPlayer1())
+                    this.htmlCells[i * 8 + j].append(checker);
+                    if(this.board.getBoard()[i][j]?.getIsQueen()) {
+                        this.turnIntoQueen(checker);
+                    }
                 } 
                 if(this.board.getBoard()[i][j]?.getPlayer() == this.board.getPlayer2()) {
-                    this.htmlCells[i * 8 + j].append(this.createCheckerImg(this.board.getPlayer2()));
+                    const checker = this.createCheckerImg(this.board.getPlayer2());
+                    this.htmlCells[i * 8 + j].append(checker);
+                    if(this.board.getBoard()[i][j]?.getIsQueen()) {
+                        this.turnIntoQueen(checker);
+                    }
                 } 
             }
         }
@@ -172,6 +181,10 @@ export class View {
 
     getNewGameBtn() {
         return this.newGameBtn;
+    }
+
+    getExampleBtn() {
+        return this.exampleBtn;
     }
 
     switchPlayer(player) {
