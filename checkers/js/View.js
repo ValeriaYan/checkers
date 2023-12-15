@@ -6,10 +6,12 @@ export class View {
         this.htmlCurrentPlayer = document.querySelector('.main__player');
         this.winnerBlock = document.querySelector('.winner');
         this.overlay = document.querySelector('.overlay');
+        this.newGameBtn = document.querySelector('.main__start-btn');
         this.board = board;
     }
 
     fillHtmlBoard() {
+        this.clearBoard();
         for(let i = 0; i < this.board.getBoard().length; i++) {
             for(let j = 0; j < this.board.getBoard()[i].length; j++) {
                 if(this.board.getBoard()[i][j]?.getPlayer() == this.board.getPlayer1()) {
@@ -20,6 +22,15 @@ export class View {
                 } 
             }
         }
+    }
+
+    clearBoard() {
+        this.htmlCells.forEach((cell) => {
+            const child = cell.children[0];
+            if(child) {
+                cell.removeChild(child);
+            }
+        });
     }
 
     createCheckerImg(typePlayer) {
@@ -157,6 +168,10 @@ export class View {
 
     getOverlay() {
         return this.overlay;
+    }
+
+    getNewGameBtn() {
+        return this.newGameBtn;
     }
 
     switchPlayer(player) {

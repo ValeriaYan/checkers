@@ -78,6 +78,7 @@ table {
 
 .main__controls {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }

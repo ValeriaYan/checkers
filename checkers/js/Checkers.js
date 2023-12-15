@@ -4,7 +4,6 @@ export class Checkers {
     constructor(board) {
         this.board = board;
         this.currentPlayer = this.board.player1;
-        this.fillBoard();
     }
 
     getCurrentPlayer() {
