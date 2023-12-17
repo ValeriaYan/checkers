@@ -8,6 +8,7 @@ export class View {
         this.overlay = document.querySelector('.overlay');
         this.newGameBtn = document.querySelector('.main__start-btn');
         this.exampleBtn = document.querySelector('.main__example-btn');
+        this.completeMoveBtn = document.querySelector('.main__complete-btn');
         this.board = board;
     }
 
@@ -36,6 +37,8 @@ export class View {
     clearBoard() {
         this.htmlCells.forEach((cell) => {
             const child = cell.children[0];
+            cell.classList.remove('require');
+            cell.classList.remove('available');
             if(child) {
                 cell.removeChild(child);
             }
@@ -53,6 +56,8 @@ export class View {
             img.src = '../../assets/checker__black.png';
             img.classList.add('black');
         }
+        img.dataset.isActive = false;
+        img.dataset.isMoved = false;
     
         return img;
     }
@@ -64,11 +69,13 @@ export class View {
 
     changeParentForChecker(oldCell, newCell, checker) {
         oldCell.classList.remove('checked');
+        newCell.classList.add('checked');
         oldCell.removeChild(checker);
         newCell.append(checker);
     }
 
     async moveChecker(checker, newCell) {
+        checker.dataset.isMoved = true;
         const parent = checker.parentNode;
         this.smoothMove(checker, parent, newCell);
         await new Promise((res, rej) => {
@@ -124,6 +131,7 @@ export class View {
     }
 
     setActiveChecker(checker) {
+        checker.dataset.isActive = true;
         const parent = checker.parentNode;
         const indexParent = +parent.dataset.row * 8 + +parent.dataset.col;
         this.blockAllCheckersExceptOne(indexParent);
@@ -131,6 +139,8 @@ export class View {
     }
     
     removeActiveChecker(checker) {
+        checker.dataset.isActive = false;
+        checker.dataset.isMoved = false;
         this.unlockAllCheckers();
         const parent = checker.parentNode;
         parent.classList.remove('checked');
@@ -187,6 +197,10 @@ export class View {
         return this.exampleBtn;
     }
 
+    getCompleteBtn() {
+        return this.completeMoveBtn;
+    }
+
     switchPlayer(player) {
         this.htmlCurrentPlayer.dataset.player = player;
         this.htmlCurrentPlayer.textContent = player;
@@ -195,5 +209,13 @@ export class View {
     displayWinnerBlock(winner) {
         this.winnerBlock.classList.add('active');
         this.winnerBlock.children[0].textContent = winner;
+    }
+
+    setCompleteBtn() {
+        this.completeMoveBtn.disabled = false;
+    }
+
+    removeCompleteBtn() {
+        this.completeMoveBtn.disabled = true;
     }
 }

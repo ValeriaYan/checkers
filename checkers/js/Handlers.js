@@ -1,6 +1,6 @@
 export class Handlers {
-    constructor(moveMode, view) {
-        this.moveMode = moveMode;
+    constructor(game, view) {
+        this.game = game;
         this.view = view;
         this.htmlBoard = view.getHtmlBoard();
         this.htmlCells = view.getHtmlCells();
@@ -8,6 +8,7 @@ export class Handlers {
         this.overlay = view.getOverlay();
         this.newGameBtn = view.getNewGameBtn();
         this.exampleBtn = view.getExampleBtn();
+        this.completeMoveBtn = view.getCompleteBtn();
     }
 
     start() {
@@ -16,29 +17,34 @@ export class Handlers {
         this.overlay.addEventListener('click', this.overlayClickHandler.bind(this));
         this.newGameBtn.addEventListener('click', this.newGameBtnClickHandler.bind(this));
         this.exampleBtn.addEventListener('click', this.exampleBtnClickHandler.bind(this));
+        this.completeMoveBtn.addEventListener('click', this.completeBtnClickHandler.bind(this));
+    }
+
+    completeBtnClickHandler() {
+        this.game.completeMove();
     }
     
     newGameBtnClickHandler() {
-        this.moveMode.fillBoard();
+        this.game.fillBoard();
     }
 
     exampleBtnClickHandler() {
-        this.moveMode.fillExampleBoard();
+        this.game.fillExampleBoard();
     }
 
     checkerClickHandler(event) {
         if(event.target.classList.contains(`board__checker`)) {
-            if(!event.target.parentNode.classList.contains(`checked`)) {
-                this.moveMode.setActiveChecker(event.target);
-            } else {
-                this.moveMode.removeActiveChecker();
+            if(event.target.dataset.isActive == "false") {
+                this.game.setActiveChecker(event.target);
+            } else if(event.target.dataset.isActive == "true" && event.target.dataset.isMoved == "false") {
+                this.game.removeActiveChecker();
             }
         }
     }
 
     cellClickHandler(event) {
         if(event.target.classList.contains(`board__cell`) && ((event.target.classList.contains(`available`) || event.target.classList.contains(`require`)))) {
-            this.moveMode.moveChecker(event.target);
+            this.game.moveChecker(event.target);
         }
     }
 

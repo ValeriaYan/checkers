@@ -1,10 +1,9 @@
 
-export class MoveMode {
+export class Game {
     constructor(view, checkers) {
        this.activeChecker = null;
        this.startingPosition = null;
        this.counterAvailableMoves = 0;
-       this.counterRequireMoves = 0;
        this.checkers = checkers;
        this.view = view;
     }
@@ -28,12 +27,9 @@ export class MoveMode {
     }
 
     removeActiveChecker() {
-        if(this.counterAvailableMoves == 0 && this.counterRequireMoves == 0) {
-            this.view.removeActiveChecker(this.activeChecker);
-            this.activeChecker = null;
-            this.startingPosition = null;
-            this.counterMoves = 0;
-        }
+        this.view.removeActiveChecker(this.activeChecker);
+        this.activeChecker = null;
+        this.startingPosition = null;
     }
 
     getAvailableMoves(checker) {
@@ -47,36 +43,41 @@ export class MoveMode {
     }
 
     async moveChecker(cell) {
-        const parent = this.activeChecker.parentNode;
-        const oldPosition = [+parent.dataset.row, +parent.dataset.col];
-        const newPosition = [+cell.dataset.row, +cell.dataset.col];
-        if(cell.classList.contains('available')) {
-            this.counterAvailableMoves++;
-        }
-        
-        const queen = this.checkers.moveChecker(oldPosition, newPosition);
-        const way = this.checkers.getWay(oldPosition, newPosition);
-        for(let i = 0; i < way.length; i++) {
-            const cell = this.view.getCellByIndex(way[i][0] * 8 + way[i][1])
-            if(cell.children[0]) {
-                this.deleteChecker(way[i][0], way[i][1]);
+        if(this.counterAvailableMoves === 0) {
+            const parent = this.activeChecker.parentNode;
+            const oldPosition = [+parent.dataset.row, +parent.dataset.col];
+            const newPosition = [+cell.dataset.row, +cell.dataset.col];
+            if(cell.classList.contains('available')) {
+                this.counterAvailableMoves++;
             }
-            await this.view.moveChecker(this.activeChecker, cell);
+            
+            const queen = this.checkers.moveChecker(oldPosition, newPosition);
+            const way = this.checkers.getWay(oldPosition, newPosition);
+            for(let i = 0; i < way.length; i++) {
+                const cell = this.view.getCellByIndex(way[i][0] * 8 + way[i][1])
+                if(cell.children[0]) {
+                    this.deleteChecker(way[i][0], way[i][1]);
+                }
+                await this.view.moveChecker(this.activeChecker, cell);
+                this.view.removeAvailableCells();
+                this.view.setActiveChecker(this.activeChecker);
+            }
+            if(queen) {
+                this.view.turnIntoQueen(this.activeChecker);
+            }
+            if(this.getRequireMoves(this.activeChecker).length == 0 || this.counterAvailableMoves == 1) {
+                this.view.setCompleteBtn();
+            } else {
+                this.setActiveChecker(this.activeChecker);
+            }
         }
-        if(cell.classList.contains('require')) {
-            this.counterRequireMoves++;
-        }
-        if(queen) {
-            this.view.turnIntoQueen(this.activeChecker);
-        }
-        if(this.getRequireMoves(this.activeChecker).length == 0 || this.counterAvailableMoves == 1) {
-            this.counterAvailableMoves = 0;
-            this.counterRequireMoves = 0;
-            this.removeActiveChecker();
-            this.switchPlayer();
-        } else {
-            this.setActiveChecker(this.activeChecker);
-        }
+    }
+    
+    completeMove() {
+        this.counterAvailableMoves = 0;
+        this.removeActiveChecker();
+        this.switchPlayer();
+        this.view.removeCompleteBtn();
     }
 
     switchPlayer() {
@@ -95,7 +96,6 @@ export class MoveMode {
     }
 
 
-    completeMove() {}
 
     cancelMove() {}
 
