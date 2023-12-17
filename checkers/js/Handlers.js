@@ -9,6 +9,7 @@ export class Handlers {
         this.newGameBtn = view.getNewGameBtn();
         this.exampleBtn = view.getExampleBtn();
         this.completeMoveBtn = view.getCompleteBtn();
+        this.cancelMoveBtn = view.getCancelBtn();
     }
 
     start() {
@@ -18,10 +19,15 @@ export class Handlers {
         this.newGameBtn.addEventListener('click', this.newGameBtnClickHandler.bind(this));
         this.exampleBtn.addEventListener('click', this.exampleBtnClickHandler.bind(this));
         this.completeMoveBtn.addEventListener('click', this.completeBtnClickHandler.bind(this));
+        this.cancelMoveBtn.addEventListener('click', this.cancelBtnClickHandler.bind(this));
     }
 
     completeBtnClickHandler() {
         this.game.completeMove();
+    }
+
+    cancelBtnClickHandler() {
+        this.game.cancelMove();
     }
     
     newGameBtnClickHandler() {

@@ -9,6 +9,7 @@ export class View {
         this.newGameBtn = document.querySelector('.main__start-btn');
         this.exampleBtn = document.querySelector('.main__example-btn');
         this.completeMoveBtn = document.querySelector('.main__complete-btn');
+        this.cancelMoveBtn = document.querySelector('.main__cancel-btn');
         this.board = board;
     }
 
@@ -169,6 +170,14 @@ export class View {
         this.htmlCells[index].removeChild(checker);
     }
 
+    returnDeletedChecker(checker, position) {
+        const htmlChecker = this.createCheckerImg(checker.player);
+        if(checker.getIsQueen()) {
+            this.turnIntoQueen(htmlChecker);
+        }
+        this.htmlCells[position].append(htmlChecker);
+    }
+
     getHtmlBoard() {
         return this.htmlBoard
     }
@@ -200,6 +209,9 @@ export class View {
     getCompleteBtn() {
         return this.completeMoveBtn;
     }
+    getCancelBtn() {
+        return this.cancelMoveBtn;
+    }
 
     switchPlayer(player) {
         this.htmlCurrentPlayer.dataset.player = player;
@@ -217,5 +229,13 @@ export class View {
 
     removeCompleteBtn() {
         this.completeMoveBtn.disabled = true;
+    }
+
+    setCancelBtn() {
+        this.cancelMoveBtn.disabled = false;
+    }
+
+    removeCancelBtn() {
+        this.cancelMoveBtn.disabled = true;
     }
 }
