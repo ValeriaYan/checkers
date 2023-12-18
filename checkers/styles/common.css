@@ -57,15 +57,30 @@ p {
 }
 
 .btn {
-    background-color: var(--second-color);
+    width: 100%;
+    margin: 0 0 30px 0;
+    text-align: center;
+    background-color: transparent;
     padding: 10px 20px;
-    border-radius: 40px;
     cursor: pointer;
+    border: 1px solid var(--text-color);
+    border-radius: 0px;
 
-    transition: all ease 0.2s;
+    /* transition: all ease 0.4s; */
+    transition: width ease 0.4s;
 }
 
 .btn:hover {
-    background-color: #8b5eee;
-    transition: all ease 0.2s;
+    width: 70%;
+    border-radius: 40px;
+    /* transition: all ease 0.4s; */
+    transition: width ease 0.4s;
+}
+
+.btn[disabled] {
+    background-color: #b9b9b9;
+}
+
+.btn[disabled]:hover {
+    background-color: #b9b9b9;
 }

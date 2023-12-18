@@ -10,6 +10,7 @@ export class View {
         this.exampleBtn = document.querySelector('.main__example-btn');
         this.completeMoveBtn = document.querySelector('.main__complete-btn');
         this.cancelMoveBtn = document.querySelector('.main__cancel-btn');
+        this.textarea = document.querySelector('.notation');
         this.board = board;
     }
 
@@ -175,7 +176,7 @@ export class View {
         if(checker.getIsQueen()) {
             this.turnIntoQueen(htmlChecker);
         }
-        this.htmlCells[position].append(htmlChecker);
+        this.htmlCells[position[0] * 8 + position[1]].append(htmlChecker);
     }
 
     getHtmlBoard() {
@@ -237,5 +238,9 @@ export class View {
 
     removeCancelBtn() {
         this.cancelMoveBtn.disabled = true;
+    }
+
+    getTextarea() {
+        return this.textarea;
     }
 }

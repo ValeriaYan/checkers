@@ -39,7 +39,6 @@ export class Checkers {
     }
 
     moveChecker(oldPosition, newPosition) {
-        console.log(this.board.getBoard())
         const checker = this.board.getBoard()[oldPosition[0]][oldPosition[1]];
         this.board.getBoard()[oldPosition[0]][oldPosition[1]] = null;
         this.board.getBoard()[newPosition[0]][newPosition[1]] = checker;
@@ -60,9 +59,7 @@ export class Checkers {
     }
     
     returnDeletedChecker(checker, position) {
-        const row = Math.floor(position / 8);
-        const col = position % 8
-        this.board.getBoard()[row][col] = checker;
+        this.board.getBoard()[position[0]][position[1]] = checker;
     }
 
     switchPlayer() {
