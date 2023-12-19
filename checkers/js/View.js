@@ -11,6 +11,7 @@ export class View {
         this.completeMoveBtn = document.querySelector('.main__complete-btn');
         this.cancelMoveBtn = document.querySelector('.main__cancel-btn');
         this.textarea = document.querySelector('.notation');
+        this.showBoardBtn = document.querySelector('.notation__show-btn');
         this.board = board;
     }
 
@@ -212,6 +213,10 @@ export class View {
     }
     getCancelBtn() {
         return this.cancelMoveBtn;
+    }
+
+    getShowBoardBtn() {
+        return this.showBoardBtn;
     }
 
     switchPlayer(player) {

@@ -14,7 +14,6 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-
 }
 
 .board__table {
@@ -182,3 +181,9 @@ table {
     background-color: var(--cell-color-red);
 }
   
+.notation__buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

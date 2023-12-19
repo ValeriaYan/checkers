@@ -1,4 +1,5 @@
 import { Notation } from './Notation';
+import { ParsingError } from './errors/ParsingError';
 
 export class Game {
     constructor(view, checkers) {
@@ -18,6 +19,25 @@ export class Game {
     
     fillExampleBoard() {
         this.checkers.fillExampleBoard();
+        this.view.fillHtmlBoard();
+    }
+    
+    parsingNotation() {
+        this.checkers.fillBoard();
+        const board = this.checkers.getBoard();
+        const textarea = this.view.getTextarea();
+        const notationRows = textarea.value.split('\n');
+        for(let i = 0; i < notationRows.length - 1; i++) {
+            const positions = this.notation.turnNotationRowInPositions(notationRows[i]);
+            try {
+                this.checkers.moveChecker(positions[0], positions[1]);
+            } catch (err) {
+                if(err instanceof ParsingError) {
+                    throw new ParsingError('Parsing error:', err.cause);
+                }
+            }
+            this.switchPlayer();
+        }
         this.view.fillHtmlBoard();
     }
 

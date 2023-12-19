@@ -10,6 +10,8 @@ export class Handlers {
         this.exampleBtn = view.getExampleBtn();
         this.completeMoveBtn = view.getCompleteBtn();
         this.cancelMoveBtn = view.getCancelBtn();
+        this.showBoardBtn = view.getShowBoardBtn();
+        this.textarea = view.getTextarea();
     }
 
     start() {
@@ -20,6 +22,12 @@ export class Handlers {
         this.exampleBtn.addEventListener('click', this.exampleBtnClickHandler.bind(this));
         this.completeMoveBtn.addEventListener('click', this.completeBtnClickHandler.bind(this));
         this.cancelMoveBtn.addEventListener('click', this.cancelBtnClickHandler.bind(this));
+        this.showBoardBtn.addEventListener('click', this.showBoardBtnClickHandler.bind(this));
+    }
+
+
+    showBoardBtnClickHandler() {
+        this.game.parsingNotation();
     }
 
     completeBtnClickHandler() {

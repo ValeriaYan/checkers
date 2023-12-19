@@ -1,4 +1,9 @@
 import { Checker } from './Checker';
+import { ParsingError, 
+        PositionDoesNotExist, 
+        WrongCheckerInPosition, 
+        UnavailablePosition,
+        WrongNewPosition } from './errors/ParsingError';
 
 export class Checkers {
     constructor(board) {
@@ -39,6 +44,7 @@ export class Checkers {
     }
 
     moveChecker(oldPosition, newPosition) {
+        this.checkMove(oldPosition, newPosition);
         const checker = this.board.getBoard()[oldPosition[0]][oldPosition[1]];
         this.board.getBoard()[oldPosition[0]][oldPosition[1]] = null;
         this.board.getBoard()[newPosition[0]][newPosition[1]] = checker;
@@ -50,6 +56,33 @@ export class Checkers {
             checker.setQueen();
             return true;
         }
+    }
+
+    checkMove(oldPosition, newPosition) {
+        if(oldPosition[0] > 7 || oldPosition[1] > 7 || oldPosition[0] < 0 || oldPosition[1] < 0) {
+            throw new PositionDoesNotExist(oldPosition);
+        }
+        if(newPosition[0] > 7 || newPosition[1] > 7 || newPosition[0] < 0 || newPosition[1] < 0) {
+            throw new PositionDoesNotExist(newPosition);
+        }
+        const checker = this.board.getBoard()[oldPosition[0]][oldPosition[1]];
+        if(!checker || checker.getPlayer() !== this.currentPlayer) {
+            throw new WrongCheckerInPosition(oldPosition);
+        }
+
+        const availablePositions = this.getAvailableMoves(oldPosition);
+        const requirePositions = this.getRequireMoves(oldPosition);
+
+        if(!availablePositions.find((position) => position[0] == newPosition[0] && position[1] == newPosition[1]) &&
+        !requirePositions.find((position) => position[0] == newPosition[0] && position[1] == newPosition[1])) {
+            throw new UnavailablePosition(newPosition);
+        }
+        
+        if(availablePositions.find((position) => position[0] == newPosition[0] && position[1] == newPosition[1]) && requirePositions.length !== 0){
+            throw new WrongNewPosition();
+        }
+
+        return 0;
     }
 
     deleteChecker(row, col) {
@@ -247,5 +280,9 @@ export class Checkers {
         }
 
         return way;
+    }
+
+    getBoard() {
+        return this.board.getBoard();
     }
 }
