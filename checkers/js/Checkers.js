@@ -1,18 +1,14 @@
 import { Checker } from './Checker';
-import { ParsingError, 
-        PositionDoesNotExist, 
+import {PositionDoesNotExist, 
         WrongCheckerInPosition, 
         UnavailablePosition,
         WrongNewPosition } from './errors/ParsingError';
+import { Board } from './Board';
 
 export class Checkers {
-    constructor(board) {
-        this.board = board;
+    constructor() {
+        this.board = new Board();
         this.currentPlayer = this.board.player1;
-    }
-
-    getCurrentPlayer() {
-        return this.currentPlayer;
     }
 
     fillBoard() {
@@ -44,30 +40,47 @@ export class Checkers {
     }
 
     moveChecker(oldPosition, newPosition) {
-        this.checkMove(oldPosition, newPosition);
         const checker = this.board.getBoard()[oldPosition[0]][oldPosition[1]];
-        this.board.getBoard()[oldPosition[0]][oldPosition[1]] = null;
-        this.board.getBoard()[newPosition[0]][newPosition[1]] = checker;
+        this.replacePositionChecker(oldPosition, newPosition);
         if(newPosition[0] == 0 && checker.getPlayer() == this.board.getPlayer1()) {
             checker.setQueen();
-            return true;
         }
         if(newPosition[0] == 7 && checker.getPlayer() == this.board.getPlayer2()) {
             checker.setQueen();
-            return true;
+        }
+
+        return this.checkDeletion(oldPosition, newPosition);
+    }
+
+    replacePositionChecker(oldPosition, newPosition) {
+        const checker = this.board.getBoard()[oldPosition[0]][oldPosition[1]];
+        this.board.getBoard()[oldPosition[0]][oldPosition[1]] = null;
+        this.board.getBoard()[newPosition[0]][newPosition[1]] = checker;
+    }
+
+    checkDeletion(oldPosition, newPosition) {
+        const way = this.getWay(oldPosition, newPosition);
+        for(let i = 0; i < way.length - 1; i++) {
+            if(this.board.getBoard()[way[i][0], way[i][1]] !== null) {
+                return this.deleteChecker(way[i][0], way[i][1]);
+            }
         }
     }
 
-    checkMove(oldPosition, newPosition) {
+    checkQueen(checkerPosition) {
+        return this.board.getBoard()[checkerPosition[0]][checkerPosition[1]].getIsQueen();
+    }
+
+    checkMove(oldPosition, newPosition, notationRow, notationPositions) {
         if(oldPosition[0] > 7 || oldPosition[1] > 7 || oldPosition[0] < 0 || oldPosition[1] < 0) {
-            throw new PositionDoesNotExist(oldPosition);
+            throw new PositionDoesNotExist(notationPositions[0], notationRow);
         }
         if(newPosition[0] > 7 || newPosition[1] > 7 || newPosition[0] < 0 || newPosition[1] < 0) {
-            throw new PositionDoesNotExist(newPosition);
+            throw new PositionDoesNotExist(notationPositions[1], notationRow);
         }
         const checker = this.board.getBoard()[oldPosition[0]][oldPosition[1]];
         if(!checker || checker.getPlayer() !== this.currentPlayer) {
-            throw new WrongCheckerInPosition(oldPosition);
+            throw new WrongCheckerInPosition(notationPositions[0], notationRow);
         }
 
         const availablePositions = this.getAvailableMoves(oldPosition);
@@ -75,14 +88,14 @@ export class Checkers {
 
         if(!availablePositions.find((position) => position[0] == newPosition[0] && position[1] == newPosition[1]) &&
         !requirePositions.find((position) => position[0] == newPosition[0] && position[1] == newPosition[1])) {
-            throw new UnavailablePosition(newPosition);
+            throw new UnavailablePosition(notationPositions[1], notationRow);
         }
         
         if(availablePositions.find((position) => position[0] == newPosition[0] && position[1] == newPosition[1]) && requirePositions.length !== 0){
-            throw new WrongNewPosition();
+            throw new WrongNewPosition(notationPositions[1], notationRow);
         }
 
-        return 0;
+        return true;
     }
 
     deleteChecker(row, col) {
@@ -257,25 +270,29 @@ export class Checkers {
     }
 
     getWay(startPosition, endPosition) {
-        const way = []
-        if(startPosition[0] > endPosition[0] && startPosition[1] > endPosition[1]) {
-            for(let i = startPosition[0]; i > endPosition[0]; i--) {
-                way.push([--startPosition[0], --startPosition[1]])
+        const way = [];
+        let rowStart = startPosition[0];
+        let colStart = startPosition[1];
+        let rowEnd = endPosition[0];
+        let colEnd = endPosition[1];
+        if(rowStart > rowEnd && colStart > colEnd) {
+            for(let i = rowStart; i > rowEnd; i--) {
+                way.push([--rowStart, --colStart])
             }
         }
-        if(startPosition[0] > endPosition[0] && startPosition[1] < endPosition[1]) {
-            for(let i = startPosition[0]; i > endPosition[0]; i--) {
-                way.push([--startPosition[0], ++startPosition[1]])
+        if(rowStart > rowEnd && colStart < colEnd) {
+            for(let i = rowStart; i > rowEnd; i--) {
+                way.push([--rowStart, ++colStart])
             }
         }
-        if(startPosition[0] < endPosition[0] && startPosition[1] > endPosition[1]) {
-            for(let i = startPosition[0]; i < endPosition[0]; i++) {
-                way.push([++startPosition[0], --startPosition[1]])
+        if(rowStart < rowEnd && colStart > colEnd) {
+            for(let i = rowStart; i < rowEnd; i++) {
+                way.push([++rowStart, --colStart])
             }
         }
-        if(startPosition[0] < endPosition[0] && startPosition[1] < endPosition[1]) {
-            for(let i = startPosition[0]; i < endPosition[0]; i++) {
-                way.push([++startPosition[0], ++startPosition[1]])
+        if(rowStart < rowEnd && colStart < colEnd) {
+            for(let i = rowStart; i < rowEnd; i++) {
+                way.push([++rowStart, ++colStart])
             }
         }
 
@@ -283,6 +300,10 @@ export class Checkers {
     }
 
     getBoard() {
-        return this.board.getBoard();
+        return this.board;
+    }
+
+    getCurrentPlayer() {
+        return this.currentPlayer;
     }
 }

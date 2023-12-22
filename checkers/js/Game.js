@@ -1,44 +1,74 @@
 import { Notation } from './Notation';
 import { ParsingError } from './errors/ParsingError';
+import { Checkers } from './checkers';
+import { HTMLElements } from './HTMLElements';
 
 export class Game {
-    constructor(view, checkers) {
+    constructor(view) {
        this.activeChecker = null;
        this.counterAvailableMoves = 0;
        this.startingPosition = null;
        this.checkerWay = [];
-       this.checkers = checkers;
+       this.checkers = null;
        this.view = view;
-       this.notation = new Notation(view.getTextarea());
+       this.notation = null;
     }
 
-    fillBoard() {
-        this.checkers.fillBoard();
-        this.view.fillHtmlBoard();
+    getBoard() {
+        return this.checkers.getBoard();
+    }
+
+    newGame() {
+        this.activeChecker = null;
+        this.counterAvailableMoves = 0;
+        this.startingPosition = null;
+        this.checkerWay = [];
+        this.checkers = new Checkers();
     }
     
-    fillExampleBoard() {
+    setNewNotation() {
+        this.view.clearTextarea();
+        this.notation = new Notation(HTMLElements.textarea);
+    }
+
+    startNewGame() {
+        this.newGame();
+        this.setNewNotation();
+        this.checkers.fillBoard();
+        this.view.fillHtmlBoard(this.getBoard());
+    }
+    
+    startExampleGame() {
+        this.newGame();
+        this.setNewNotation();
         this.checkers.fillExampleBoard();
-        this.view.fillHtmlBoard();
+        this.view.fillHtmlBoard(this.getBoard());
     }
     
-    parsingNotation() {
+    startGameFromNotation() {
+        this.newGame();
+        const textarea = HTMLElements.textarea;
+        this.notation = new Notation(textarea);
         this.checkers.fillBoard();
-        const board = this.checkers.getBoard();
-        const textarea = this.view.getTextarea();
-        const notationRows = textarea.value.split('\n');
-        for(let i = 0; i < notationRows.length - 1; i++) {
-            const positions = this.notation.turnNotationRowInPositions(notationRows[i]);
-            try {
-                this.checkers.moveChecker(positions[0], positions[1]);
-            } catch (err) {
-                if(err instanceof ParsingError) {
-                    throw new ParsingError('Parsing error:', err.cause);
-                }
+        let notationRows = textarea.value.split('\n');
+        notationRows = notationRows.filter((row) => row !== '');
+        try{
+            for(let i = 0; i < notationRows.length; i++) {
+                const positions = this.notation.turnNotationRowInPositions(notationRows[i]);
+                const notationPositions = [this.notation.turnIndicesInPositionOnBoard(positions[0]), this.notation.turnIndicesInPositionOnBoard(positions[1])]
+                this.checkers.checkMove(positions[0], positions[1], notationRows[i], notationPositions);
+                this.checkers.moveChecker(positions[0], positions[1], );
+                this.switchPlayer();
             }
-            this.switchPlayer();
+            this.notation.setCurrentValues();
+            this.view.fillHtmlBoard(this.getBoard());
+        } catch (err) {
+            if(err instanceof ParsingError) {
+                this.view.showErrorInNotation(err.message, err.row);
+            } else {
+                console.log(err)
+            }
         }
-        this.view.fillHtmlBoard();
     }
 
     setActiveChecker(checker) {
@@ -80,12 +110,12 @@ export class Game {
                 this.counterAvailableMoves++;
             }
             
-            const queen = this.checkers.moveChecker(oldPosition, newPosition);
             const way = this.checkers.getWay(oldPosition, newPosition);
+            const deletedChecker = this.checkers.moveChecker(oldPosition, newPosition);
             for(let i = 0; i < way.length; i++) {
                 const cell = this.view.getCellByIndex(way[i][0] * 8 + way[i][1])
                 if(cell.children[0]) {
-                    const deletedChecker = this.deleteChecker(way[i][0], way[i][1]);
+                    this.view.deleteChecker(way[i][0], way[i][1]);
                     this.checkerWay.push({deleted: deletedChecker, position: way[i]});
                 } else {
                     this.checkerWay.push({deleted: null, position: way[i]});
@@ -93,7 +123,7 @@ export class Game {
                 await this.view.moveChecker(this.activeChecker, cell);
                 this.view.removeAvailableCells();
             }
-            if(queen) {
+            if(this.checkers.checkQueen(newPosition)) {
                 this.view.turnIntoQueen(this.activeChecker);
             }
             if(this.getRequireMoves(this.activeChecker).length == 0 || this.counterAvailableMoves == 1) {
@@ -116,7 +146,7 @@ export class Game {
     async cancelMove() {
         this.view.removeCancelBtn();
         this.view.removeCompleteBtn();
-        this.checkers.moveChecker(this.checkerWay[this.checkerWay.length - 1].position, this.startingPosition);
+        this.checkers.replacePositionChecker(this.checkerWay[this.checkerWay.length - 1].position, this.startingPosition);
         for(let i = this.checkerWay.length - 1; i >= 0; i--) {
             const index = this.checkerWay[i].position[0] * 8 + this.checkerWay[i].position[1];
             const cell = this.view.getCellByIndex(index)
@@ -138,18 +168,8 @@ export class Game {
         }
     }
 
-    deleteChecker(row, col) {
-        this.view.deleteChecker(row, col);
-        return this.checkers.deleteChecker(row, col);
-    }
-
     returnDeletedChecker(checker, position) {
         this.view.returnDeletedChecker(checker, position);
         this.checkers.returnDeletedChecker(checker, position);
     }
-
-    getActiveChecker() {
-        return this.activeChecker;
-    }
-
 }

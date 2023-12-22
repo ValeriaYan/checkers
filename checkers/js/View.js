@@ -1,35 +1,24 @@
+import { HTMLElements } from "./HTMLElements";
 
 export class View {
-    constructor(board) {
-        this.htmlBoard = document.querySelector('.board');
-        this.htmlCells = document.querySelectorAll('.board__cell');
-        this.htmlCurrentPlayer = document.querySelector('.main__player');
-        this.winnerBlock = document.querySelector('.winner');
-        this.overlay = document.querySelector('.overlay');
-        this.newGameBtn = document.querySelector('.main__start-btn');
-        this.exampleBtn = document.querySelector('.main__example-btn');
-        this.completeMoveBtn = document.querySelector('.main__complete-btn');
-        this.cancelMoveBtn = document.querySelector('.main__cancel-btn');
-        this.textarea = document.querySelector('.notation');
-        this.showBoardBtn = document.querySelector('.notation__show-btn');
-        this.board = board;
-    }
+    constructor() {}
 
-    fillHtmlBoard() {
+    fillHtmlBoard(board) {
+        HTMLElements.notationError.classList.remove('active');
         this.clearBoard();
-        for(let i = 0; i < this.board.getBoard().length; i++) {
-            for(let j = 0; j < this.board.getBoard()[i].length; j++) {
-                if(this.board.getBoard()[i][j]?.getPlayer() == this.board.getPlayer1()) {
-                    const checker = this.createCheckerImg(this.board.getPlayer1())
-                    this.htmlCells[i * 8 + j].append(checker);
-                    if(this.board.getBoard()[i][j]?.getIsQueen()) {
+        for(let i = 0; i < board.getBoard().length; i++) {
+            for(let j = 0; j < board.getBoard()[i].length; j++) {
+                if(board.getBoard()[i][j]?.getPlayer() == board.getPlayer1()) {
+                    const checker = this.createCheckerImg(board.getPlayer1())
+                    HTMLElements.htmlCells[i * 8 + j].append(checker);
+                    if(board.getBoard()[i][j]?.getIsQueen()) {
                         this.turnIntoQueen(checker);
                     }
                 } 
-                if(this.board.getBoard()[i][j]?.getPlayer() == this.board.getPlayer2()) {
-                    const checker = this.createCheckerImg(this.board.getPlayer2());
-                    this.htmlCells[i * 8 + j].append(checker);
-                    if(this.board.getBoard()[i][j]?.getIsQueen()) {
+                if(board.getBoard()[i][j]?.getPlayer() == board.getPlayer2()) {
+                    const checker = this.createCheckerImg(board.getPlayer2());
+                    HTMLElements.htmlCells[i * 8 + j].append(checker);
+                    if(board.getBoard()[i][j]?.getIsQueen()) {
                         this.turnIntoQueen(checker);
                     }
                 } 
@@ -38,10 +27,11 @@ export class View {
     }
 
     clearBoard() {
-        this.htmlCells.forEach((cell) => {
+        HTMLElements.htmlCells.forEach((cell) => {
             const child = cell.children[0];
             cell.classList.remove('require');
             cell.classList.remove('available');
+            cell.classList.remove('checked');
             if(child) {
                 cell.removeChild(child);
             }
@@ -116,20 +106,20 @@ export class View {
         if(requireMoves != 0) {
             for(let i = 0; i < requireMoves.length; i++) {
                 const indexCell = requireMoves[i][0] * 8 + requireMoves[i][1];
-                this.htmlCells[indexCell].classList.add('require');
+                HTMLElements.htmlCells[indexCell].classList.add('require');
             }
         } else {
             for(let i = 0; i < availableMoves.length; i++) {
                 const indexCell = availableMoves[i][0] * 8 + availableMoves[i][1];
-                this.htmlCells[indexCell].classList.add('available');
+                HTMLElements.htmlCells[indexCell].classList.add('available');
             }
         }
     }
 
     removeAvailableCells() {
-        for(let i = 0; i < this.htmlCells.length; i++) {
-            this.htmlCells[i].classList.remove('require');
-            this.htmlCells[i].classList.remove('available');
+        for(let i = 0; i < HTMLElements.htmlCells.length; i++) {
+            HTMLElements.htmlCells[i].classList.remove('require');
+            HTMLElements.htmlCells[i].classList.remove('available');
         }
     }
 
@@ -151,25 +141,25 @@ export class View {
     }
 
     blockAllCheckersExceptOne(index) {
-        for(let i = 0; i < this.htmlCells.length; i++) {
-            if(i !== index && this.htmlCells[i].children[0]) {
-                this.htmlCells[i].children[0].style.pointerEvents = 'none';
+        for(let i = 0; i < HTMLElements.htmlCells.length; i++) {
+            if(i !== index && HTMLElements.htmlCells[i].children[0]) {
+                HTMLElements.htmlCells[i].children[0].style.pointerEvents = 'none';
             }
         }
     }
 
     unlockAllCheckers() {
-        for(let i = 0; i < this.htmlCells.length; i++) {
-            if(this.htmlCells[i].children[0]) {
-                this.htmlCells[i].children[0].style.pointerEvents = 'auto';
+        for(let i = 0; i < HTMLElements.htmlCells.length; i++) {
+            if(HTMLElements.htmlCells[i].children[0]) {
+                HTMLElements.htmlCells[i].children[0].style.pointerEvents = 'auto';
             }
         }
     }
 
     deleteChecker(row, col) {
         const index = row * 8 + col;
-        const checker = this.htmlCells[index].children[0];
-        this.htmlCells[index].removeChild(checker);
+        const checker = HTMLElements.htmlCells[index].children[0];
+        HTMLElements.htmlCells[index].removeChild(checker);
     }
 
     returnDeletedChecker(checker, position) {
@@ -177,75 +167,47 @@ export class View {
         if(checker.getIsQueen()) {
             this.turnIntoQueen(htmlChecker);
         }
-        this.htmlCells[position[0] * 8 + position[1]].append(htmlChecker);
-    }
-
-    getHtmlBoard() {
-        return this.htmlBoard
+        HTMLElements.htmlCells[position[0] * 8 + position[1]].append(htmlChecker);
     }
 
     getCellByIndex(index) {
-        return this.htmlCells[index];
-    }
-
-    getHtmlCells() {
-        return this.htmlCells;
-    }
-
-    getWinnerBlock() {
-        return this.winnerBlock;
-    }
-
-    getOverlay() {
-        return this.overlay;
-    }
-
-    getNewGameBtn() {
-        return this.newGameBtn;
-    }
-
-    getExampleBtn() {
-        return this.exampleBtn;
-    }
-
-    getCompleteBtn() {
-        return this.completeMoveBtn;
-    }
-    getCancelBtn() {
-        return this.cancelMoveBtn;
-    }
-
-    getShowBoardBtn() {
-        return this.showBoardBtn;
+        return HTMLElements.htmlCells[index];
     }
 
     switchPlayer(player) {
-        this.htmlCurrentPlayer.dataset.player = player;
-        this.htmlCurrentPlayer.textContent = player;
+        HTMLElements.htmlCurrentPlayer.dataset.player = player;
+        HTMLElements.htmlCurrentPlayer.textContent = player;
     }
 
     displayWinnerBlock(winner) {
-        this.winnerBlock.classList.add('active');
-        this.winnerBlock.children[0].textContent = winner;
+        HTMLElements.winnerBlock.classList.add('active');
+        HTMLElements.winnerBlock.children[0].textContent = winner;
+    }
+
+    showErrorInNotation(message, notationRow) {
+        const errorBlock = HTMLElements.notationError;
+        errorBlock.classList.add('active');
+        errorBlock.innerHTML = notationRow + '<br>' + message;
     }
 
     setCompleteBtn() {
-        this.completeMoveBtn.disabled = false;
+        HTMLElements.completeMoveBtn.disabled = false;
     }
 
     removeCompleteBtn() {
-        this.completeMoveBtn.disabled = true;
+        HTMLElements.completeMoveBtn.disabled = true;
     }
 
     setCancelBtn() {
-        this.cancelMoveBtn.disabled = false;
+        HTMLElements.cancelMoveBtn.disabled = false;
     }
 
     removeCancelBtn() {
-        this.cancelMoveBtn.disabled = true;
+        HTMLElements.cancelMoveBtn.disabled = true;
     }
 
-    getTextarea() {
-        return this.textarea;
+    clearTextarea() {
+        HTMLElements.textarea.value = '';
+        HTMLElements.textarea.textContent = '';
     }
 }

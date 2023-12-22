@@ -32,22 +32,25 @@ export class Notation {
         return this.horizontal[indices[1]] + this.vertical[indices[0]];
     }
 
-    clearNotation() {
-        this.textarea.textContent = '';
-    }
-
     turnNotationRowInPositions(notationRow) {
         const move = notationRow.split(' ')[1];
-        this.currentMove = notationRow.split(' ')[0].split('.')[0];
-        this.currentPlayer = notationRow.split(' ')[0].split('.')[1];
         let positions = move.split('-');
         if(positions.length == 1) {
             positions = move.split(':');
         }
         const startPosition = [this.vertical.indexOf(positions[0][1]), this.horizontal.indexOf(positions[0][0])];
         const endPosition = [this.vertical.indexOf(positions[1][1]), this.horizontal.indexOf(positions[1][0])];
-
+        
         return [startPosition, endPosition];
-
+    }
+    
+    setCurrentValues() {
+        const notationRows = this.textarea.value.split('\n');
+        this.currentMove = +notationRows[notationRows.length - 2].split(' ')[0].split('.')[0];
+        this.currentPlayer = +notationRows[notationRows.length - 2].split(' ')[0].split('.')[1];
+        if(this.currentPlayer == 2) {
+            this.currentMove++;
+        }
+        this.currentPlayer == 1 ? this.currentPlayer = 2 : this.currentPlayer = 1;
     }
 }
